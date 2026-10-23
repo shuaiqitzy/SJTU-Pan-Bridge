@@ -78,7 +78,7 @@ download_tree() {
     total=$(jq -r '.totalNum' <<<"$listing")
 
     while IFS= read -r item; do
-      jq -e '.name | type == "string" and length > 0 and (contains("\u0000") | not)' \
+      jq -e '.name | type == "string" and length > 0 and (explode | index(0) == null)' \
         <<<"$item" >/dev/null || die "invalid entry name in: $remote"
       # NUL-delimited read preserves spaces, backslashes and trailing newlines.
       IFS= read -r -d '' name < <(jq -j '.name, "\u0000"' <<<"$item")
